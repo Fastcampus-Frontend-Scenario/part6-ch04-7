@@ -17,13 +17,12 @@ jobs:
       pull-requests: write
     steps:
       - name: Comment to PR (성공)
-        env:
-          RESULT: ${{needs.ci-job.result}}
-        if: ${{ env.RESULT }} == 'success'
+        if: needs.deploy-preview.result == 'success'
         uses: actions/github-script@v6
         id: my-script
         with:
           script: |
+            console.log(${env.RESULT})
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -31,13 +30,12 @@ jobs:
               body: "🟢 CI passed"
             })
       - name: Comment to PR (실패)
-        env:
-          RESULT: ${{needs.ci-job.result}}
-        if: ${{ env.RESULT }} == 'failure'
+        if: needs.deploy-preview.result == 'failure'
         uses: actions/github-script@v6
         id: my-script2
         with:
           script: |
+            console.log(${env.RESULT})
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
