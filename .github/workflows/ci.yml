@@ -22,7 +22,6 @@ jobs:
         id: my-script
         with:
           script: |
-            console.log(${env.RESULT})
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -35,7 +34,6 @@ jobs:
         id: my-script2
         with:
           script: |
-            console.log(${env.RESULT})
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
