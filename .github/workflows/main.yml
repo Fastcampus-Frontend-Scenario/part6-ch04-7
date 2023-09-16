@@ -31,8 +31,8 @@ jobs:
     steps:
       - name: Comment to PR (Succeeded)
         env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-        if: ${{needs.deploy-preview.result}} == 'success'
+          DEPLOYMENT_URL: ${{ needs.deploy-preview.outputs.deploymentUrl }}
+        if: needs.deploy-preview.result == 'success'
         uses: actions/github-script@v6
         id: my-script1
         with:
@@ -41,12 +41,10 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "🟢 Deployed at ${{env.DEPLOYMENT_URL}}"
+              body: "🟢 Deployed at ${{ env.DEPLOYMENT_URL }}"
             })
       - name: Comment to PR (Failure)
-        env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-        if: ${{needs.deploy-preview.result}} == 'failure'
+        if: needs.deploy-preview.result == 'failure'
         uses: actions/github-script@v6
         id: my-script2
         with:
@@ -58,9 +56,7 @@ jobs:
               body: "🔴 Failed to deploy preview"
             })
       - name: Comment to PR (cancelled)
-        env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-        if: ${{needs.deploy-preview.result}} == 'cancelled'
+        if: needs.deploy-preview.result == 'cancelled'
         uses: actions/github-script@v6
         id: my-script
         with:
