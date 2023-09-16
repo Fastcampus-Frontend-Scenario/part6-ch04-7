@@ -8,18 +8,38 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
-      - name: Add comment to PR
+  add-comment:
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      issues: write
+      pull_requests: write
+    steps:
+      - name: Comment to PR (성공)
+        env:
+          RESULT: ${{needs.ci-job.result}}
+        if: ${{ env.RESULT }} == 'success'
         uses: actions/github-script@v6
-        if: always()
+        id: my-script
         with:
           script: |
-            const name = '${{ github.workflow }}';
-            const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
-            const success = '${{ job.status }}' === 'success';
-            const body = `${name}: ${success}\n${url}`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
-              repo: context:repo.repo,
-              body: body
+              repo: context.repo.repo,
+              body: "🟢 CI passed"
+            })
+      - name: Comment to PR (실패)
+        env:
+          RESULT: ${{needs.ci-job.result}}
+        if: ${{ env.RESULT }} == 'failure'
+        uses: actions/github-script@v6
+        id: my-script2
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "❌ CI failed"
             })
