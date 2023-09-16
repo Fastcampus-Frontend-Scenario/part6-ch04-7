@@ -2,9 +2,7 @@ name: Vercel CD
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-on:
-  pull_request:
-    types: [opened, reopened, edited]
+on: pull_request
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
@@ -34,8 +32,7 @@ jobs:
       - name: Comment to PR (Succeeded)
         env: 
           DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'success'
+        if: ${{needs.deploy-preview.result}} == 'success'
         uses: actions/github-script@v6
         id: my-script1
         with:
@@ -49,8 +46,7 @@ jobs:
       - name: Comment to PR (Failure)
         env: 
           DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'failure'
+        if: ${{needs.deploy-preview.result}} == 'failure'
         uses: actions/github-script@v6
         id: my-script2
         with:
@@ -64,8 +60,7 @@ jobs:
       - name: Comment to PR (cancelled)
         env: 
           DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'cancelled'
+        if: ${{needs.deploy-preview.result}} == 'cancelled'
         uses: actions/github-script@v6
         id: my-script
         with:
