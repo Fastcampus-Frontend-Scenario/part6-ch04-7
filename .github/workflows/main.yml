@@ -1,10 +1,8 @@
 name: Vercel CD
 env:
-  VERCEL_ORG_ID‎: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-on:
-  pull_request:
-    types: [opened, reopened, edited]
+on: pull_request
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
@@ -17,7 +15,7 @@ jobs:
       - name: Pull Vercel env information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build project artifacts
-        run: vercel build --tokens=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy project Artifacts to Vercel
         id: deploy-step
         run: |
@@ -33,9 +31,8 @@ jobs:
     steps:
       - name: Comment to PR (Succeeded)
         env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'success'
+          DEPLOYMENT_URL: ${{ needs.deploy-preview.outputs.deploymentUrl }}
+        if: needs.deploy-preview.result == 'success'
         uses: actions/github-script@v6
         id: my-script1
         with:
@@ -44,13 +41,10 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "🟢 Deployed at ${{env.DEPLOYMENT_URL}}"
+              body: "🟢 Deployed at ${{ env.DEPLOYMENT_URL }}"
             })
       - name: Comment to PR (Failure)
-        env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'failure'
+        if: needs.deploy-preview.result == 'failure'
         uses: actions/github-script@v6
         id: my-script2
         with:
@@ -62,10 +56,7 @@ jobs:
               body: "🔴 Failed to deploy preview"
             })
       - name: Comment to PR (cancelled)
-        env: 
-          DEPLOYMENT_URL: ${{needs.deploy-preview.outputs.deploymentUrl}}
-          RESULT: ${{needs.deploy-preview.result}}
-        if: ${{ env.RESULT }} == 'cancelled'
+        if: needs.deploy-preview.result == 'cancelled'
         uses: actions/github-script@v6
         id: my-script
         with:
