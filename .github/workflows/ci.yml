@@ -16,7 +16,7 @@ jobs:
             const name = '${{ github.workflow }}';
             const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
             const success = '${{ job.status }}' === 'success';
-            const body = `${name}: ${success ? 'Succeeded 🟢': 'Failed ❌'}\n${url}`;
+            const body = `${name}: ${success}\n${url}`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
