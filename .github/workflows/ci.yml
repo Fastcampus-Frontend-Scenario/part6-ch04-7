@@ -13,7 +13,7 @@ jobs:
     if: always()
     permissions:
       issues: write
-      pull_requests: write
+      pull-requests: write
     steps:
       - name: Comment to PR (성공)
         env:
