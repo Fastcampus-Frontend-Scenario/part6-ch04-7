@@ -1,0 +1,10 @@
+name: CI
+on: pull_request
+jobs:
+  ci-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
